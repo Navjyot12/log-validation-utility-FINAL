@@ -594,6 +594,7 @@ export const retailPymntTtl = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
+  offer: 'offer'
 }
 
 export const taxNotInlcusive = [...fnbCategories]
