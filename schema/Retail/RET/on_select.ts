@@ -131,6 +131,10 @@ export const onSelectSchema = {
               items: {
                 type: 'object',
                 properties: {
+                  type: {
+                    type: 'string',
+                    enums:['Delivery', 'Self-Pickup', 'Buyer-Delivery']
+                  },
                   id: {
                     type: 'string',
                   },
@@ -142,6 +146,7 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/category': {
                     type: 'string',
+                    enum: ['Takeaway', 'Kerbside', 'Immediate Delivery', 'Standard Delivery', 'Express Delivery', 'Same Day Delivery', 'Next Day Delivery']
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
