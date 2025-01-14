@@ -19,6 +19,7 @@ const retailPymntTtl: { [key: string]: string } = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
+  offer: 'offer'
 }
 export const checkOnSelect = (data: any) => {
   if (!data || isObjectEmpty(data)) {

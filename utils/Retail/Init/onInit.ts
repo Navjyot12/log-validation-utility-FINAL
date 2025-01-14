@@ -617,7 +617,7 @@ export const checkOnInit = (data: any) => {
     } catch (err: any) {
       logger.error(`Error while handling payment status: ${err.stack}`)
 
-      onInitObj['message/order/payment'] = 'An unexpected error occurred while processing the payment status.'
+      onInitObj['message/order/payment'] = 'Payment status can not be paid (COD flow) '
     }
 
     try {

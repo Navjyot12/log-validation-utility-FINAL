@@ -171,23 +171,33 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT}`)
-    const tts: any = getValue('timeToShip')
+    const tts: any = getValue('timeToShip');
     ON_SELECT_OUT_OF_STOCK.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
-      const tat = isoDurToSec(ff['@ondc/org/TAT'])
+        const tat = isoDurToSec(ff['@ondc/org/TAT']);
+        const isTakeawayOrKerbside = ff['@ondc/org/fulfillment_method'] === 'takeaway' || ff['@ondc/org/fulfillment_method'] === 'kerbside';
 
-      if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
-      }
+        if (isTakeawayOrKerbside) {
+            // O2D (TAT) must be equal to O2S (time to ship) for takeaway and kerbside
+            if (tat !== tts) {
+                errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} must be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH} for takeaway or kerbside`;
+            }
+        } else {
+            // For other cases, O2D (TAT) should not be less than O2S (time to ship), and must not be equal
+            if (tat < tts) {
+                errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`;
+            }
 
-      if (tat === tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
-      }
+            if (tat === tts) {
+                errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`;
+            }
+        }
 
-      logger.info(tat, 'asdfasdf', tts)
-    })
-  } catch (error: any) {
-    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
-  }
+        logger.info(tat, 'asdfasdf', tts);
+    });
+} catch (error: any) {
+    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}: ${error.message}`);
+}
+
 
   try {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
@@ -614,3 +624,4 @@ export const checkOnSelect_OOS = (data: any) => {
 
   return Object.keys(errorObj).length > 0 && errorObj
 }
+  
