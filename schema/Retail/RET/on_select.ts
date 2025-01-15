@@ -133,7 +133,7 @@ export const onSelectSchema = {
                 properties: {
                   type: {
                     type: 'string',
-                    enums:['Delivery', 'Self-Pickup', 'Buyer-Delivery']
+                    enums: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   id: {
                     type: 'string',
@@ -146,7 +146,15 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/category': {
                     type: 'string',
-                    enum: ['Takeaway', 'Kerbside', 'Immediate Delivery', 'Standard Delivery', 'Express Delivery', 'Same Day Delivery', 'Next Day Delivery']
+                    enum: [
+                      'Takeaway',
+                      'Kerbside',
+                      'Immediate Delivery',
+                      'Standard Delivery',
+                      'Express Delivery',
+                      'Same Day Delivery',
+                      'Next Day Delivery',
+                    ],
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
@@ -204,14 +212,13 @@ export const onSelectSchema = {
                             type: 'integer',
                           },
                         },
-                        required: ['count'],
                       },
                       title: {
                         type: 'string',
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
-                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount', 'offer']
+                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount', 'offer'],
                       },
                       price: {
                         type: 'object',
