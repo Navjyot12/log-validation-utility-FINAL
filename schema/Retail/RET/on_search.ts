@@ -782,6 +782,81 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  creds: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          pattern: "^ESG-\\d{8}$",
+                          description: "Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits)."
+                        },
+                        descriptor: {
+                          type: "object",
+                          properties: {
+                            code: {
+                              type: "string",
+                              pattern: "^ESG-\\d{8}$",
+                              description: "Code of the credential, format: ESG-XXXXXXXX (8 digits)."
+                            },
+                            short_desc: {
+                              type: "string",
+                              description: "Short description of the credential."
+                            },
+                            name: {
+                              type: "string",
+                              description: "Name of the credential."
+                            }
+                          },
+                          required: ["code", "short_desc", "name"],
+                          additionalProperties: false
+                        },
+                        url: {
+                          type: "string",
+                          format: "uri",
+                          description: "URL to the credential or badge image."
+                        },
+                        tags: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                description: "Code representing the tag (e.g., 'verification')."
+                              },
+                              list: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      description: "Code representing the specific tag value (e.g., 'verify_url')."
+                                    },
+                                    value: {
+                                      type: "string",
+                                      format: "uri",
+                                      description: "URL or other values associated with the tag."
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
+                                },
+                                description: "List of key-value pairs for additional tag data."
+                              }
+                            },
+                            required: ["code", "list"],
+                            additionalProperties: false
+                          },
+                          description: "Tags associated with the credential, including verification details."
+                        }
+                      },
+                      required: ["id", "descriptor", "url", "tags"],
+                      additionalProperties: false
+                    }
+                  },
                   offers: {
                     type: 'array',
                     items: {
