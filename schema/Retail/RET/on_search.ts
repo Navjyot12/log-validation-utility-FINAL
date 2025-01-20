@@ -853,7 +853,7 @@ export const onSearchSchema = {
                           description: "Tags associated with the credential, including verification details."
                         }
                       },
-                      required: ["id", "descriptor", "url", "tags"],
+                      required: ["id", "descriptor"],
                       additionalProperties: false
                     }
                   },
