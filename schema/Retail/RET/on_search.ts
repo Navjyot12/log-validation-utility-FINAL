@@ -1,5 +1,5 @@
 import { combinedCategory } from '../../../utils/enum'
-import { offersSchemavalidation} from '../RET/offersvalidations'
+import { offersSchemavalidation } from '../RET/offersvalidations'
 
 export const onSearchSchema = {
   type: 'object',
@@ -763,6 +763,7 @@ export const onSearchSchema = {
                           },
                         },
                       },
+                      
                       required: [
                         'id',
                         'time',
@@ -873,7 +874,7 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enums:['discount', 'buyXgetY', 'freebie','slab','combo','delivery','exchange','financing']
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                             },
                             images: {
                               type: 'array',
@@ -934,6 +935,7 @@ export const onSearchSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                                enums: ['qualifier', 'benefit', 'meta']
                               },
                               list: {
                                 type: 'array',
@@ -943,6 +945,7 @@ export const onSearchSchema = {
                                     code: {
                                       type: 'string',
                                       description: 'Code representing the specific tag property.',
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                                     },
                                     value: {
                                       type: 'string',
@@ -956,12 +959,10 @@ export const onSearchSchema = {
                             required: ['code', 'list'],
                           },
                         },
-
-
-
                       },
-                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
-                      oneOf: offersSchemavalidation, // Validate against the offers schema validation from offersvalidations.ts
+                      oneOf: offersSchemavalidation,// Validate against the offers schema validation from offersvalidations.ts
+                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
                     },
                   },
                   tags: {
@@ -1347,9 +1348,11 @@ export const onSearchSchema = {
                     },
                   },
                 },
+               
                 required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
+            
           },
           required: ['bpp/descriptor', 'bpp/providers'],
         },
