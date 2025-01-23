@@ -951,6 +951,10 @@ export const onSearchSchema = {
                                       type: 'string',
                                       description: 'Value for the tag property.',
                                     },
+                                    
+                                   allOf: offersSchemavalidation,// Validate against the offers schema validation from offersvalidations.ts
+                                  },
+                                  
                                   },
                                   required: ['code', 'value'],
                                 },
@@ -960,7 +964,7 @@ export const onSearchSchema = {
                           },
                         },
                       },
-                      oneOf: offersSchemavalidation,// Validate against the offers schema validation from offersvalidations.ts
+                      
                       required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
 
                     },
@@ -1359,6 +1363,6 @@ export const onSearchSchema = {
       },
       required: ['catalog'],
     },
-  },
+ 
   required: ['context', 'message'],
 }

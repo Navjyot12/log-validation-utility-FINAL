@@ -434,6 +434,46 @@ export const checkOnsearch = (data: any) => {
       `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
     )
   }
+  //Validating Offers
+  try {
+    logger.info(`Checking offers.tags for bpp/providers`)
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const offers = onSearchCatalog['bpp/providers'][i].offers
+      if (offers && offers.tags) {
+        offers.tags.forEach((tag: any, index: number) => {
+          if (tag.code === 'discount') {
+            const key = `bpp/providers[${i}]/offers/tags[${index}]`
+            // Check if value has min_value
+            if (!tag.value || !tag.value.min_value) {
+              errorObj[`${key}/value/min_value`] = `min_value is compulsory for discount code in offers.tags[${index}]`
+              logger.error(`min_value is compulsory for discount code in offers.tags[${index}]`)
+            }
+            // Check if benefits has value and value_type
+            if (tag.benefits) {
+              tag.benefits.forEach((benefit: any, benefitIndex: number) => {
+                if (!benefit.value) {
+                  errorObj[`${key}/benefits[${benefitIndex}]/value`] = `value is compulsory for benefits in offers.tags[${index}]`
+                  logger.error(`value is compulsory for benefits in offers.tags[${index}]`)
+                }
+                if (!benefit.value_type) {
+                  errorObj[`${key}/benefits[${benefitIndex}]/value_type`] = `value_type is compulsory for benefits in offers.tags[${index}]`
+                  logger.error(`value_type is compulsory for benefits in offers.tags[${index}]`)
+                }
+              })
+            } else {
+              errorObj[`${key}/benefits`] = `benefits are compulsory for discount code in offers.tags[${index}]`
+              logger.error(`benefits are compulsory for discount code in offers.tags[${index}]`)
+            }
+          }
+        })
+      }
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Errors while checking offers.tags for bpp/providers, ${error.stack}`,
+    )
+  }
+
 
   // Checking price of items in bpp/providers
   try {
