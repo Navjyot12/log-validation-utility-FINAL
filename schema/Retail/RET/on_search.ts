@@ -1,6 +1,4 @@
 import { combinedCategory } from '../../../utils/enum'
-import { offersSchemavalidation } from '../RET/offersvalidations'
-
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -950,9 +948,7 @@ export const onSearchSchema = {
                                     value: {
                                       type: 'string',
                                       description: 'Value for the tag property.',
-                                    },
-                                    
-                                   allOf: offersSchemavalidation,// Validate against the offers schema validation from offersvalidations.ts
+                                    },                             
                                   },
                                   
                                   },
