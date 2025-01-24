@@ -160,6 +160,18 @@ export const FnBinitSchema = {
                 required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
+            offers: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: {
+                    type: "string"
+                  }
+                },
+                required: ["id"]
+              }
+            },
             billing: {
               type: 'object',
               properties: {
