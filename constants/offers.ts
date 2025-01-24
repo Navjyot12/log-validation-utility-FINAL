@@ -135,4 +135,5 @@ export const offers = {
             item_value: false,
         },
     },
+    
 }

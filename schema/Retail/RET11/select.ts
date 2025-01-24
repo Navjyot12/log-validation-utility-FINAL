@@ -148,6 +148,46 @@ export const FnBselectSchema = {
                 required: ['id', 'location_id','quantity'],
               },
             },
+            offers: {
+              type: 'array',
+              items: {
+                type: "object",
+                properties: {
+                  id: {
+                    type: "string",
+                  },
+                  tags: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        code: {
+                          type: "string"
+                        },
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ["yes", "no"]
+                              }
+                            },
+                            required: ["code", "value"]
+                          }
+                        }
+                      },
+                      required: ["code", "list"]
+                    }
+                  }
+                },
+                required: ["id", "tags"]
+              },
+            },
             fulfillments: {
               type: 'array',
               items: {

@@ -159,6 +159,18 @@ export const initSchema = {
                 required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
+            offers: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: {
+                    type: "string"
+                  }
+                },
+                required: ["id"]
+              }
+            },
             billing: {
               type: 'object',
               properties: {
