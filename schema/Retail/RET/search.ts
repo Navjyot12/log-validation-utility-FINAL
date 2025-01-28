@@ -239,7 +239,8 @@ export const searchSchema = {
                   //     },
                   //   },
                   // },
-                  {
+                   //Did changes for catalog_full
+                   {
                     properties: {
                       code: { const: 'catalog_full' },
                     },

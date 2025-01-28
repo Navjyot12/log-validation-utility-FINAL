@@ -142,7 +142,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'bap_features', 'catalog_full'],
                   },
                   list: {
                     type: 'array',
@@ -232,6 +232,33 @@ export const FnBsearchSchema = {
                   //     },
                   //   },
                   // },
+                   //Did changes for catalog_full
+                  {
+                    properties: {
+                      code: { const: 'catalog_full' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                const: "payload_type"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ['link', 'inline']
+                              }
+                            },
+                            required: ["code", "value"],
+                          }
+                        }
+                      }
+                    }
+                  },
                   {
                     properties: {
                       code: { const: 'catalog_inc' },
