@@ -148,7 +148,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'bap_features', 'catalog_full'],
                   },
                   list: {
                     type: 'array',
@@ -164,6 +164,7 @@ export const searchSchema = {
                             'static_terms',
                             'effective_date',
                             'static_terms_new',
+                            'payload_type',
                             '000',
                             '001',
                             '002',
@@ -238,6 +239,32 @@ export const searchSchema = {
                   //     },
                   //   },
                   // },
+                  {
+                    properties: {
+                      code: { const: 'catalog_full' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                const: "payload_type"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ['link', 'inline']
+                              }
+                            },
+                            required: ["code", "value"],
+                          }
+                        }
+                      }
+                    }
+                  },
                   {
                     properties: {
                       code: { const: 'catalog_inc' },
