@@ -476,7 +476,7 @@ export const checkOnsearch = (data: any) => {
                 logger.error(`'benefit' tag must include both 'value' and 'value_type' for offers[${offerIndex}]`);
               }
               else {
-                // Additional check to ensure 'value' is negative for discount
+                // check to ensure that the value of discount must be -ve
                 const valueItem = benefitDiscount.list.find((item: any) => item.code === 'value');
                 if (valueItem && parseFloat(valueItem.value) >= 0) {
                     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
