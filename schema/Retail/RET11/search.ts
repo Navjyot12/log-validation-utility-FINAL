@@ -226,8 +226,12 @@ export const FnBsearchSchema = {
                             type: 'object',
                             properties: {
                               code: { const: '000' },
+                              value: {
+                                type: "string",
+                                enum: ['yes', 'no']
+                              }
                             },
-                            required: ['code'],
+                            required: ['code', 'value'],
                           },
                         },
                       },
