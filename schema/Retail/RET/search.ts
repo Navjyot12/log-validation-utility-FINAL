@@ -22,7 +22,8 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -221,24 +222,24 @@ export const searchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
-                  // {
-                  //   properties: {
-                  //     code: { const: 'bap_features' },
-                  //   },
-                  //   then: {
-                  //     properties: {
-                  //       list: {
-                  //         contains: {
-                  //           type: 'object',
-                  //           properties: {
-                  //             code: { const: '000' },
-                  //           },
-                  //           required: ['code'],
-                  //         },
-                  //       },
-                  //     },
-                  //   },
-                  // },
+                   {
+                     properties: {
+                       code: { const: 'bap_features'},
+                     },
+                     then: {
+                       properties: {
+                         list: {
+                           contains: {
+                             type: 'object',
+                             properties: {
+                               code: { const: '000' },
+                             },
+                             required: ['code'],
+                           },
+                         },
+                       },
+                     },
+                  },
                    //Did changes for catalog_full
                    {
                     properties: {
