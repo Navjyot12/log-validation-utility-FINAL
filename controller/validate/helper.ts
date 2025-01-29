@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs} from '../../shared/validateLogs'
+import { IGMvalidateLogs } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -53,6 +53,7 @@ const validateRetail = async (
 
   switch (version) {
     case '1.2.0':
+    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {
