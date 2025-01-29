@@ -222,26 +222,30 @@ export const searchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
-                   {
-                     properties: {
-                       enum: ['bnp_features', 'bnp_features'],
-                     },
-                     then: {
-                       properties: {
-                         list: {
-                           contains: {
-                             type: 'object',
-                             properties: {
-                               code: { const: '000' },
-                             },
-                             required: ['code'],
-                           },
-                         },
-                       },
-                     },
+                  {
+                    properties: {
+                      code: { const: 'bnp_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                              value: {
+                                type: "string",
+                                enum: ['yes', 'no']
+                              }
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
                   },
-                   //Did changes for catalog_full
-                   {
+                  //Did changes for catalog_full
+                  {
                     properties: {
                       code: { const: 'catalog_full' },
                     },
