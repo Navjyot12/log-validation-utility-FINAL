@@ -179,8 +179,7 @@ export const initSchema = {
                           },
                         },
                       },
-
-                    }
+                    },
                   },
                 },
               },
