@@ -149,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bap_features', 'catalog_full'],
+                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full', 'bnp_features'],
                   },
                   list: {
                     type: 'array',
@@ -224,7 +224,7 @@ export const searchSchema = {
                 anyOf: [
                    {
                      properties: {
-                       code: { const: 'bap_features'},
+                       enum: ['bnp_features', 'bnp_features'],
                      },
                      then: {
                        properties: {
@@ -351,7 +351,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { const: 'bap_features' },
+                  code: { const: 'bnp_features' },
                 },
                 required: ['code', 'list'],
               },

@@ -143,7 +143,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bap_features', 'catalog_full'],
+                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bnp_features'],
                   },
                   list: {
                     type: 'array',
@@ -215,25 +215,25 @@ export const FnBsearchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
-                  // {
-                  //   properties: {
-                  //     code: { const: 'bap_features' },
-                  //   },
-                  //   then: {
-                  //     properties: {
-                  //       list: {
-                  //         contains: {
-                  //           type: 'object',
-                  //           properties: {
-                  //             code: { const: '000' },
-                  //           },
-                  //           required: ['code'],
-                  //         },
-                  //       },
-                  //     },
-                  //   },
-                  // },
-                   //Did changes for catalog_full
+                  {
+                    properties: {
+                      code: { const: 'bnp_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                            },
+                            required: ['code'],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  //Did changes for catalog_full
                   {
                     properties: {
                       code: { const: 'catalog_full' },
@@ -344,7 +344,7 @@ export const FnBsearchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { const: 'bap_features' },
+                  code: { const: 'bnp_features' },
                 },
                 required: ['code', 'list'],
               },
