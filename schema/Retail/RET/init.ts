@@ -151,14 +151,40 @@ export const initSchema = {
                             },
                             required: ['code', 'value'],
                           },
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'np_fees'
+                              }
+                            }
+                          },
+                          then: {
+                            items: {
+                              properties: {
+                                code: {
+                                  const: 'id'
+                                }
+                              }
+                            },
+                            else: {
+                              items: {
+                                properties: {
+                                  code: {
+                                    type: 'string'
+                                  },
+                                },
+                              },
+                              required: ['code', 'list'],
+                            },
+                          },
                         },
                       },
-                      required: ['code', 'list'],
-                    },
+
+                    }
                   },
                 },
-                required: ['id', 'fulfillment_id', 'quantity'],
               },
+              required: ['id', 'fulfillment_id', 'quantity'],
             },
             offers: {
               type: "array",
@@ -319,3 +345,5 @@ export const initSchema = {
   },
   required: ['context', 'message'],
 }
+
+
