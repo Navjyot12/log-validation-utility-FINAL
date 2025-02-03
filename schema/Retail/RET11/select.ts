@@ -14,8 +14,7 @@ export const FnBselectSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -147,46 +146,6 @@ export const FnBselectSchema = {
                   },
                 },
                 required: ['id', 'location_id','quantity'],
-              },
-            },
-            offers: {
-              type: 'array',
-              items: {
-                type: "object",
-                properties: {
-                  id: {
-                    type: "string",
-                  },
-                  tags: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        code: {
-                          type: "string"
-                        },
-                        list: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              code: {
-                                type: "string"
-                              },
-                              value: {
-                                type: "string",
-                                enum: ["yes", "no"]
-                              }
-                            },
-                            required: ["code", "value"]
-                          }
-                        }
-                      },
-                      required: ["code", "list"]
-                    }
-                  }
-                },
-                required: ["id", "tags"]
               },
             },
             fulfillments: {

@@ -14,8 +14,7 @@ export const onConfirmSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -508,7 +507,7 @@ export const onConfirmSchema = {
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
-                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount', 'offer'],
+                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount'],
                       },
                       price: {
                         type: 'object',

@@ -35,7 +35,7 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
-import { catalogRejectionSchema } from '../schema/Retail/CatalogRejection/catalogRejection'
+// import { catalogRejectionSchema } from '../schema/Retail/CatalogRejection/catalogRejection'
 
 import receiverReconSchema from '../schema/RSF/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'

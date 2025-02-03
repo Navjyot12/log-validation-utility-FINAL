@@ -20,8 +20,7 @@ export const FnBonSearchIncSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -120,12 +119,6 @@ export const FnBonSearchIncSchema = {
                 properties: {
                   id: {
                     type: 'string',
-                  },
-                  rating: {
-                    type: 'number',
-                    minimum: 1,
-                    maximum: 5,
-                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -387,12 +380,6 @@ export const FnBonSearchIncSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                        },
-                        rating: {
-                          type: 'number',
-                          minimum: 1,
-                          maximum: 5,
-                          default: null,
                         },
                         time: {
                           type: 'object',

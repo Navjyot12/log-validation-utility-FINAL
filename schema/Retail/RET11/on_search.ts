@@ -28,8 +28,7 @@ export const FnBonSearchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -215,12 +214,6 @@ export const FnBonSearchSchema = {
                 properties: {
                   id: {
                     type: 'string',
-                  },
-                  rating: {
-                    type: ['number','null'],
-                    minimum: 1,
-                    maximum: 5,
-                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -425,7 +418,7 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9-]{1,12}$',
+                          pattern:'^[a-zA-Z0-9-]{12}$',
                           errorMessage: 'categories.id should be alphanumeric and upto 12 characters',
                         },
                         parent_category_id: {
@@ -491,12 +484,6 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                        },
-                        rating: {
-                          type: ['number','null'],
-                          minimum: 1,
-                          maximum: 5,
-                          default: null,
                         },
                         time: {
                           type: 'object',

@@ -13,8 +13,7 @@ export const selectSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -149,85 +148,45 @@ export const selectSchema = {
                 required: ['id', 'location_id', 'quantity'],
               },
             },
-            offers: {
+            fulfillments: {
               type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  id: {
-                    type: "string",
-                  },
-                  tags: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        code: {
-                          type: "string"
-                        },
-                        list: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              code: {
-                                type: "string"
-                              },
-                              value: {
-                                type: "string",
-                                enum: ["yes", "no"]
-                              }
-                            },
-                            required: ["code", "value"]
-                          }
-                        }
-                      },
-                      required: ["code", "list"]
-                    }
-                  }
-                },
-                required: ["id", "tags"]
-              },
-            },
-          },
-          fulfillments: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                end: {
-                  type: 'object',
-                  properties: {
-                    location: {
-                      type: 'object',
-                      properties: {
-                        gps: {
-                          type: 'string',
-                        },
-                        address: {
-                          type: 'object',
-                          properties: {
-                            area_code: {
-                              type: 'string',
-                            },
+                  end: {
+                    type: 'object',
+                    properties: {
+                      location: {
+                        type: 'object',
+                        properties: {
+                          gps: {
+                            type: 'string',
                           },
-                          required: ['area_code'],
+                          address: {
+                            type: 'object',
+                            properties: {
+                              area_code: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['area_code'],
+                          },
                         },
+                        required: ['gps', 'address'],
                       },
-                      required: ['gps', 'address'],
                     },
+                    required: ['location'],
                   },
-                  required: ['location'],
                 },
+                required: ['end'],
               },
-              required: ['end'],
             },
           },
+          required: ['provider', 'items', 'fulfillments'],
         },
-        required: ['provider', 'items', 'fulfillments'],
       },
+      required: ['order'],
     },
-    required: ['order'],
   },
   required: ['context', 'message'],
 }

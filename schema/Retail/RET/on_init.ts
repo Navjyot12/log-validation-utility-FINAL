@@ -14,8 +14,7 @@ export const onInitSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -151,36 +150,10 @@ export const onInitSchema = {
                             },
                             required: ['code', 'value'],
                           },
-                          if: {
-                            properties: {
-                              code: {
-                                const: 'np_fees'
-                              }
-                            }
-                          },
-                          then: {
-                            items: {
-                              properties: {
-                                code: {
-                                  const: 'id'
-                                }
-                              }
-                            },
-                            else: {
-                              items: {
-                                properties: {
-                                  code: {
-                                    type: 'string'
-                                  },
-                                },
-                              },
-                              required: ['code', 'list'],
-                            },
-                          },
                         },
                       },
-
-                    }
+                      required: ['code', 'list'],
+                    },
                   },
                 },
                 required: ['id', 'fulfillment_id', 'quantity'],
@@ -363,7 +336,7 @@ export const onInitSchema = {
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
-                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount', 'offer'],
+                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount'],
                       },
                       price: {
                         type: 'object',

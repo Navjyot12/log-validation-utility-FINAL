@@ -15,8 +15,7 @@ export const FnBinitSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
-          minLength: 1,
+          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -160,18 +159,6 @@ export const FnBinitSchema = {
                 },
                 required: ['id', 'fulfillment_id', 'quantity'],
               },
-            },
-            offers: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  id: {
-                    type: "string"
-                  }
-                },
-                required: ["id"]
-              }
             },
             billing: {
               type: 'object',
