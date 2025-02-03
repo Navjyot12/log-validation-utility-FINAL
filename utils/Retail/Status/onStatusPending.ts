@@ -205,7 +205,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_status.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }

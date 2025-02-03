@@ -128,7 +128,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         try {
             logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
             const payment = on_update.payment
-            const status = payment_status(payment)
+            const status = payment_status(payment, flow)
             if (!status) {
                 onupdtObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
             }

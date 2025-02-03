@@ -19,7 +19,7 @@ import {
   isoDurToSec,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
+export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: string) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -639,7 +639,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_confirm.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onCnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }

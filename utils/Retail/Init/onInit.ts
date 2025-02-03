@@ -16,7 +16,7 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnInit = (data: any) => {
+export const checkOnInit = (data: any, flow:string) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -595,7 +595,7 @@ export const checkOnInit = (data: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_init.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onInitObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
@@ -605,7 +605,7 @@ export const checkOnInit = (data: any) => {
     try {
       logger.info(`Checking if the amount is paid or not`)
       const payment = on_init.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
 
       if (status && status.message) {
         logger.error(status.message)
