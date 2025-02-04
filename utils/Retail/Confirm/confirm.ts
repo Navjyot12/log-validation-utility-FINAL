@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _, { isArray } from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
   validateSchema,
@@ -17,9 +17,9 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { FLOW_TYPES } from '../../../constants/index'
+import { FLOW } from '../../../utils/enum' 
 
-export const checkConfirm = (data: any, msgIdSet: any) => {
+export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -422,11 +422,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       if (cnfrmObj['message/order/transaction_id']) {
         cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
-        if (payment.FLOW_TYPES === FLOW_TYPES.FLOW2A) {
+        if (flow === FLOW.FLOW2A ) {
           logger.info('Skipping transaction_id check for 2A flow')
           // Skip the transaction_id check for 2A flow
         } else {
-          const status = payment_status(payment)
+          const status = payment_status(payment,flow)
           if (!status) {
             cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment'
           }
@@ -435,15 +435,27 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     } catch (err: any) {
       logger.error('Error while checking transaction in message/order/payment: ' + err.message)
     }
-
+    try {
+      if (flow === FLOW.FLOW2A){
+      logger.info('Payment status check in confirm call')
+      const payment = confirm.payment
+      if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+        logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+        cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+      } 
+    }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
+  
     //Payment details for 2A Flow
     try {
-      if ('2A') {
+      if (flow === FLOW.FLOW2A) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
         }
-
+        
         logger.info(`checking payment details in /${constants.CONFIRM}`)
         const data = confirm.payment['@ondc/org/settlement_details'][0]
         if (
@@ -497,7 +509,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      if ('2A') {
+      if (FLOW.FLOW2A === flow) {
         logger.info(`storing payment settlement details in /${constants.CONFIRM}`)
         if (confirm.payment.hasOwnProperty('@ondc/org/settlement_details')) {
           setValue('sttlmntdtls', confirm.payment['@ondc/org/settlement_details'][0])

@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
   validateSchema,
@@ -18,8 +18,9 @@ import {
   compareLists,
   isoDurToSec,
 } from '../..'
+import { FLOW } from '../../../utils/enum'
 import { getValue, setValue } from '../../../shared/dao'
-export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
+export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: string) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -639,13 +640,25 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_confirm.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onCnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
+     try {
+      if (flow === FLOW.FLOW2A){
+          logger.info('Payment status check in on confirm call')
+          const payment = on_confirm.payment
+          if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+            logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+            onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+          } 
+        }
+        } catch (err: any) {
+          logger.error('Error while checking payment in message/order/payment: ' + err.message);
+        }
 
     try {
       logger.info(`Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT} `)
