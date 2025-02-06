@@ -910,8 +910,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
             // Iterate through bpp/providers
             for (let i in onSearchCatalog['bpp/providers']) {
-              const offers = onSearchCatalog['bpp/providers'][i].offers;
-              if (offers) {
+              const offers = onSearchCatalog['bpp/providers'][i]?.offers ?? null;
+              if (!offers) {
                 offers.forEach((offer: any, offerIndex: number) => {
                   const tags = offer.tags;
 
@@ -1065,27 +1065,27 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                       }
                       break;
 
-                    case 'exchange':
-                    case 'financing':
-                      // Validate 'qualifier'
-                      const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
-                      if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
-                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-                        errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-                        logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
-                      }
+                    // case 'exchange':
+                    // case 'financing':
+                    //   // Validate 'qualifier'
+                    //   const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
+                    //   if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
+                    //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                    //     errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                    //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                    //   }
 
                       // Validate that benefits should not exist or should be empty
-                      const benefitExchangeFinancing = tags.find((tag: any) => tag.code === 'benefit');
-                      if (benefitExchangeFinancing && benefitExchangeFinancing.list.length > 0) {
-                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-                        errorObj[key] = `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-                        logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`);
-                      }
-                      break;
+                      // const benefitExchangeFinancing = tags.find((tag: any) => tag.code === 'benefit');
+                      // if (benefitExchangeFinancing && benefitExchangeFinancing.list.length > 0) {
+                      //   const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                      //   errorObj[key] = `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                      //   logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`);
+                      // }
+                      // break;
 
                       // No validation for benefits as it is not required
-                      break;
+                      // break;
 
                     default:
                       logger.info(`No specific validation required for offer type: ${offer.descriptor?.code}`);

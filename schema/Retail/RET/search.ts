@@ -244,7 +244,7 @@ export const searchSchema = {
                       },
                     },
                   },
-                  //Did changes for catalog_full
+                  // Did changes for catalog_full
                   {
                     properties: {
                       code: { const: 'catalog_full' },
@@ -355,7 +355,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { const: 'bnp_features' },
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc'] },
                 },
                 required: ['code', 'list'],
               },

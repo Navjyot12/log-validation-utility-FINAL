@@ -153,7 +153,7 @@ export const onSearchSchema = {
                                 properties: {
                                   code: {
                                     type: 'string',
-                                    enum: ['np_type'],
+                                    const: 'np_type',
                                   },
                                   value: {
                                     type: 'string',
@@ -456,38 +456,76 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name'],
                         },
                         tags: {
                           type: 'array',
                           items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              list: {
-                                type: 'array',
-                                items: {
-                                  type: 'object',
+                            oneOf: [
+                              {
+                                type: 'object',
+                                if: {
                                   properties: {
                                     code: {
-                                      type: 'string',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                    },
-                                  },
-                                  required: ['code', 'value'],
+                                      const: 'np_fees'
+                                    }
+                                  }
                                 },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: ['channel_margin_type', 'channel_margin_value']
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+
+                                }
                               },
-                            },
-                            required: ['code', 'list'],
-                          },
-                        },
+                              {
+                                type: 'object',
+                                if: {
+                                  not: {
+                                    properties: {
+                                      code: {
+                                        const: 'np_fees'
+                                      }
+                                    }
+                                  }
+                                },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string'
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+                                }
+                              }
+                            ]
+                          }
+                        }
                       },
-                      required: ['id', 'descriptor', 'tags'],
-                    },
+                    }
                   },
                   items: {
                     type: 'array',
@@ -762,7 +800,7 @@ export const onSearchSchema = {
                           },
                         },
                       },
-                      
+
                       required: [
                         'id',
                         'time',
@@ -949,22 +987,21 @@ export const onSearchSchema = {
                                     value: {
                                       type: 'string',
                                       description: 'Value for the tag property.',
-                                    },                             
+                                    },
                                   },
-                                  
-                                  },
-                                  required: ['code', 'value'],
+
                                 },
+                                required: ['code', 'value'],
                               },
                             },
-                            required: ['code', 'list'],
                           },
+                          required: ['code', 'list'],
                         },
                       },
-                      
-                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
-
                     },
+
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
                   },
                   tags: {
                     type: 'array',
@@ -1348,18 +1385,17 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags',],
                 },
-               
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
+
             },
-            
+            required: ['bpp/descriptor', 'bpp/providers'],
           },
-          required: ['bpp/descriptor', 'bpp/providers'],
         },
       },
       required: ['catalog'],
     },
- 
-  required: ['context', 'message'],
+    required: ['context', 'message'],
+  }
 }
