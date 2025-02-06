@@ -366,7 +366,7 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
         logger.info(
           `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_INIT}`,
         )
-        cnfrmObj.quoteErr2 = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_INIT} INR ${oninitQuotePrice}`
+        cnfrmObj.quoteErr = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_INIT} INR ${oninitQuotePrice}`
       }
       setValue('quotePrice', confirmQuotePrice)
     } catch (error: any) {

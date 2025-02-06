@@ -52,7 +52,8 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
               const returnFulifllmentTags = returnFulfillment?.tags[0]
               if (!isEmpty(returnFulifllmentTags?.list)) {
                 const returnFulifillmentTagsList = returnFulifllmentTags.list
-
+                const replaceArr = _.filter(returnFulifillmentTagsList, { code: "replace" });
+                let replaceValue = "";
                 const ffIdArr = _.filter(returnFulifillmentTagsList, { code: "id" })
                 const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
                 let ffId = "";
@@ -63,6 +64,17 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 else {
                   updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`
                 }
+                if (replaceArr.length > 0 && replaceArr[0]?.value) {
+                  replaceValue = replaceArr[0]?.value;
+              
+                  if (replaceValue === "yes" || replaceValue === "no") {
+                      logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                  } else {
+                      updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`;
+                  }
+              } else {
+                  updtObj['returnFulfillment/code/replace'] = `Return fulfillment/tags/list/code/replace is missing in ${apiSeq}`;
+              }
 
                 if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
                   itemQuantity = itemQuantityArr[0]?.value
@@ -228,55 +240,72 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
         update.fulfillments.forEach((item: any) => {
           item.tags?.forEach((tag: any) => {
             if (tag.code === 'return_request') {
-              return_request_obj = tag
-              let key: any = null
+              return_request_obj = tag;
+          
+              if (!Array.isArray(tag.list)) {
+                  logger.error(`tag.list is missing or not an array in ${apiSeq}`);
+                  return;
+              }         
+              let key: any = null;    
               tag.list.forEach((item: any) => {
-                if (item.code === 'item_id') {
-                  key = item.value
-                  if (!selectItemList.includes(key)) {
-                    logger.error(`Item code should be present in /${constants.SELECT} API`)
-                    const key = `inVldItemId[${item.value}]`
-                    updtObj[key] = `Item ID should be present in /${constants.SELECT} API for /${apiSeq}`
-                  } else {
-                    updateItemSet[item.value] = item.value
-                    updateItemList.push(item.value)
-                    setValue('updatedItemID', item.value)
+                  if (item.code === 'item_id') {
+                      key = item.value;
+          
+                      if (!selectItemList.includes(key)) {
+                          logger.error(`Item code should be present in /${constants.SELECT} API`);
+                          const key = `inVldItemId[${item.value}]`;
+                          updtObj[key] = `Item ID should be present in /${constants.SELECT} API for /${apiSeq}`;
+                      } else {
+                          updateItemSet[item.value] = item.value;
+                          updateItemList.push(item.value);
+                          setValue('updatedItemID', item.value);
+                      }
                   }
-                }
-                if (item.code === 'id') {
-                  if (Object.values(itemFlfllmnts).includes(item.value)) {
-                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
-                  } else {
-                    updateReturnId.push(item.value)
+          
+                  if (item.code === 'id') {
+                      if (Object.values(itemFlfllmnts).includes(item.value)) {
+                          updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`;
+                      } else {
+                          updateReturnId.push(item.value);
+                      }
                   }
-                }
-                if (item.code === 'item_quantity') {
-                  let val = item.value
-                  updateItemSet[key] = val
-                }
-                if (item.code === 'reason_id') {
-                  logger.info(`Checking for valid buyer reasonID for /${apiSeq}`)
-                  let reasonId = item.value
-
-                  if (!buyerReturnId.has(reasonId)) {
-                    logger.error(`reason_id should be a valid cancellation id (buyer app initiated)`)
-                    updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
+          
+                  if (item.code === 'replace') {
+                      logger.info(`Checking for valid replace value for /${apiSeq}`);
+                      let replaceValue = item.value;
+          
+                      if (replaceValue !== 'yes' && replaceValue !== 'no') {
+                          logger.error(`Invalid replace value: ${replaceValue} for /${apiSeq}`);
+                          updtObj.replaceValue = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`;
+                      }
                   }
-                }
-                if (item.code === 'images') {
-                  const images = item.value
-                  const allurls = images?.every((img: string) => isValidUrl(img))
-                  if (!allurls) {
-                    logger.error(
-                      `Images array should be prvided as comma seperated values and each image should be an url`,
-                    )
-                    const key = `invldImageURL`
-                    updtObj[key] =
-                      `Images array should be prvided as comma seperated values and each image should be an url for /${apiSeq}`
+          
+                  if (item.code === 'item_quantity') {
+                      let val = item.value;
+                      updateItemSet[key] = val;
                   }
-                }
-              })
-            }
+          
+                  if (item.code === 'reason_id') {
+                      logger.info(`Checking for valid buyer reasonID for /${apiSeq}`);
+                      let reasonId = item.value;
+          
+                      if (!buyerReturnId.has(reasonId)) {
+                          logger.error(`reason_id should be a valid cancellation id (buyer app initiated)`);
+                          updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`;
+                      }
+                  }
+          
+                  if (item.code === 'images') {
+                      const images = item.value;
+                      const allurls = images?.every((img: string) => isValidUrl(img));
+                      if (!allurls) {
+                          logger.error(`Images array should be provided as comma-separated values and each image should be a URL`);
+                          updtObj.invldImageURL = `Images array should be provided as comma-separated values and each image should be a URL for /${apiSeq}`;
+                      }
+                  }
+              });
+          }
+          
           })
         })
         setValue('updateReturnId', updateReturnId)
