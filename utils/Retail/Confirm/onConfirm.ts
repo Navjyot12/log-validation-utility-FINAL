@@ -120,7 +120,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_CONFIRM}, ${error.stack}`)
     }
-    
+
     try {
       logger.info(`Checking fulfillment ids for  /${constants.ON_CONFIRM}`)
       message.order.fulfillments.forEach((fulfillment: any) => {
@@ -128,12 +128,12 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
           onCnfrmObj[`message.order.fulfillments[${fulfillment.id}]`] =
             `'TAT' must be provided in message/order/fulfillments`
         }
-        const on_select_fulfillment_tat_obj:any= getValue('fulfillment_tat_obj');  
+        const on_select_fulfillment_tat_obj: any = getValue('fulfillment_tat_obj');
         const fulfillment_id = fulfillment.id
-        
-        logger.info(`Checking TAT Mistatch between  /${constants.ON_CONFIRM} & /${constants.ON_SELECT}`)     
-        if (on_select_fulfillment_tat_obj !== null && on_select_fulfillment_tat_obj[fulfillment_id]!==isoDurToSec(fulfillment['@ondc/org/TAT'])){
-          onCnfrmObj[`TAT_Mismatch`]= `TAT Mistatch between  /${constants.ON_CONFIRM} i.e ${isoDurToSec(fulfillment['@ondc/org/TAT'])} seconds & /${constants.ON_SELECT} i.e ${on_select_fulfillment_tat_obj[fulfillment_id]} seconds`
+
+        logger.info(`Checking TAT Mistatch between  /${constants.ON_CONFIRM} & /${constants.ON_SELECT}`)
+        if (on_select_fulfillment_tat_obj !== null && on_select_fulfillment_tat_obj[fulfillment_id] !== isoDurToSec(fulfillment['@ondc/org/TAT'])) {
+          onCnfrmObj[`TAT_Mismatch`] = `TAT Mistatch between  /${constants.ON_CONFIRM} i.e ${isoDurToSec(fulfillment['@ondc/org/TAT'])} seconds & /${constants.ON_SELECT} i.e ${on_select_fulfillment_tat_obj[fulfillment_id]} seconds`
         }
       })
     } catch (error: any) {
@@ -542,19 +542,20 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     }
 
     try {
-      logger.info(`Comparing order price value in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
-      const onSelectPrice: any = getValue('onSelectPrice')
+      logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      const oninitQuotePrice: any = getValue('initQuotePrice')
       const onConfirmQuotePrice = parseFloat(on_confirm.quote.price.value)
-      if (onSelectPrice != onConfirmQuotePrice) {
+
+      logger.info(`Comparing quote prices of /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      if (oninitQuotePrice != onConfirmQuotePrice) {
         logger.info(
-          `order quote price in /${constants.ON_CONFIRM} is not equal to the quoted price in /${constants.ON_SELECT}`,
+          `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_INIT}`,
         )
-        onCnfrmObj.quoteErr = `Quoted Price in /${constants.ON_CONFIRM} ${onConfirmQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} ${onSelectPrice}`
+        onCnfrmObj.quoteErr = `Quoted Price in /${constants.CONFIRM} INR ${onConfirmQuotePrice} does not match with the quoted price in /${constants.ON_INIT} INR ${oninitQuotePrice}`
       }
+      setValue('quotePrice', onConfirmQuotePrice)
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing order price value in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
     }
 
     try {
@@ -647,18 +648,18 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
-     try {
-      if (flow === FLOW.FLOW2A){
-          logger.info('Payment status check in on confirm call')
-          const payment = on_confirm.payment
-          if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-            logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
-            onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
-          } 
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on confirm call')
+        const payment = on_confirm.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
         }
-        } catch (err: any) {
-          logger.error('Error while checking payment in message/order/payment: ' + err.message);
-        }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
 
     try {
       logger.info(`Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT} `)

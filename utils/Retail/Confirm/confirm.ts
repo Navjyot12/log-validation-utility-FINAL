@@ -355,21 +355,22 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
       logger.error(`!!Error while storing order created and updated timestamps in /${constants.CONFIRM}`)
     }
 
+
     try {
-      logger.info(`Comparing order price value in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
-      const onSelectPrice: any = getValue('onSelectPrice')
+      logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      const oninitQuotePrice: any = getValue('initQuotePrice')
       const confirmQuotePrice = parseFloat(confirm.quote.price.value)
 
-      if (onSelectPrice != confirmQuotePrice) {
+      logger.info(`Comparing quote prices of /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      if (oninitQuotePrice != confirmQuotePrice ) {
         logger.info(
-          `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_SELECT}`,
+          `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_INIT}`,
         )
-        cnfrmObj.quoteErr = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
+        cnfrmObj.quoteErr2 = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_INIT} INR ${oninitQuotePrice}`
       }
-
       setValue('quotePrice', confirmQuotePrice)
     } catch (error: any) {
-      logger.error(`!!Error while comparing order price value in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
+      logger.error(`!!Error while comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
     }
 
     try {

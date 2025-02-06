@@ -385,7 +385,7 @@ export const checkOnInit = (data: any, flow:string) => {
       logger.info(`/${constants.ON_INIT} Price Breakup: ${initBreakupPrice}`)
 
       initQuotePrice = parseFloat(on_init.quote.price.value)
-
+      setValue("initQuotePrice", initQuotePrice);
       logger.info(`/${constants.ON_INIT} Quoted Price: ${initQuotePrice}`)
 
       logger.info(`Comparing /${constants.ON_INIT} Quoted Price and Net Price Breakup`)
@@ -405,6 +405,7 @@ export const checkOnInit = (data: any, flow:string) => {
       if (!on_init.payment) {
         onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
       }
+      
     } catch (error: any) {
       logger.error(`!!Error while checking /${constants.ON_INIT} Quoted Price and Net Price Breakup, ${error.stack}`)
     }
