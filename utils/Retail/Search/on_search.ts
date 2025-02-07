@@ -291,6 +291,7 @@ export const checkOnsearch = (data: any) => {
         prvdrsId.add(prvdr.id)
       }
     }
+
     setValue(`${ApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
   } catch (error: any) {
     logger.error(`!!Errors while checking provider id in bpp/providers, ${error.stack}`)
@@ -479,12 +480,12 @@ export const checkOnsearch = (data: any) => {
                 // check to ensure that the value of discount must be -ve
                 const valueItem = benefitDiscount.list.find((item: any) => item.code === 'value');
                 if (valueItem && parseFloat(valueItem.value) >= 0) {
-                    const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
-                    errorObj[key] = `'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-                    logger.error(`'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`);
+                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
+                  errorObj[key] = `'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                  logger.error(`'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`);
                 }
-            }
-              
+              }
+
               break;
 
             case 'buyXgetY':
@@ -590,7 +591,7 @@ export const checkOnsearch = (data: any) => {
                 errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
                 logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
               }
-              
+
 
               // Validate 'benefit'
               const benefitDelivery = tags.find((tag: any) => tag.code === 'benefit');
@@ -606,15 +607,15 @@ export const checkOnsearch = (data: any) => {
               }
               break;
 
-            // case 'exchange':
-            // case 'financing':
-            //   // Validate 'qualifier'
-            //   const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
-            //   if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
-            //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-            //     errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-            //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
-            //   }
+              // case 'exchange':
+              // case 'financing':
+              //   // Validate 'qualifier'
+              //   const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
+              //   if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
+              //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+              //     errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+              //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              //   }
 
               // Validate that benefits should not exist or should be empty
               const benefitExchangeFinancing = tags.find((tag: any) => tag.code === 'benefit');

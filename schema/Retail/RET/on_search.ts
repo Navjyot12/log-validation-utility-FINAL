@@ -535,6 +535,26 @@ export const onSearchSchema = {
                         id: {
                           type: 'string',
                         },
+                        replacement_terms: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              replace_within: {
+                                type: 'object',
+                                properties: {
+                                  duration: {
+                                    type: 'string',
+                                    pattern: "^P(\\d+D|\\d+W|\\d+M|\\d+Y)$",
+                                  }
+                                },
+                                required: ['duration']
+                              }
+                            },
+                            required: ['replace_within']
+                          },
+                          optional: true
+                        },
                         rating: {
                           type: ['number', 'null'],
                           minimum: 1,

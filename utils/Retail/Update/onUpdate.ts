@@ -528,6 +528,18 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         const returnFulifllmentTags = returnFulfillment?.tags[0]
                         if (!_.isEmpty(returnFulifllmentTags?.list)) {
                             const returnFulifillmentTagsList = returnFulifllmentTags.list
+                            const replaceObj = _.find(returnFulifillmentTagsList, { code: "replace" });
+                            if (replaceObj && replaceObj.value) {
+                                let replaceValue = replaceObj.value;
+
+                                if (replaceValue === "yes" || replaceValue === "no") {
+                                    logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                                } else {
+                                    onupdtObj["returnFulfillment/code/replace"] = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`;
+                                }
+                            } else {
+                                onupdtObj["returnFulfillment/code/replace"] = `Replace value is missing in ${apiSeq}`;
+                            }
 
                             const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
 
