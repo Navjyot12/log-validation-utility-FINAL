@@ -41,6 +41,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
     }
+    
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
@@ -280,6 +281,30 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       } catch (error: any) {
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_CONFIRM}, ${error.stack}`)
       }
+    }
+    //Vehicle registeration for (Self-Pickup) Kerbside
+    const fulfillments = on_confirm.fulfillments
+    if (Array.isArray(fulfillments)) {
+        fulfillments.forEach((fulfillment, index) => {
+            const type = fulfillment.type;
+            const category = fulfillment['@ondc/org/category'];
+            const vehicle = fulfillment.vehicle;
+            const SELF_PICKUP = 'Self-Pickup'
+            const KERBSIDE = 'Kerbside'
+    
+            if (type === SELF_PICKUP && category === KERBSIDE) {
+                if (!vehicle) {
+                  onCnfrmObj[`fulfillment${index}_vehicle`] =
+                        `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+                } else if (!vehicle.registration) {
+                  onCnfrmObj[`fulfillment${index}_vehicle_registration`] =
+                        `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+                }
+            } else if (vehicle) {
+              onCnfrmObj[`fulfillment${index}_vehicle`] =
+                    `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
+            }
+        });
     }
 
     try {

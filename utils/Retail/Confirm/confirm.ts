@@ -178,7 +178,33 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
         `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.CONFIRM}, ${error.stack}`,
       )
     }
+    logger.info(`Checking vehicle registration for fulfillments in /${constants.CONFIRM}`);
 
+const fulfillments = confirm.fulfillments;
+
+//Vehicle registeration for (Self-Pickup) Kerbside
+if (Array.isArray(fulfillments)) {
+    fulfillments.forEach((fulfillment, index) => {
+        const type = fulfillment.type;
+        const category = fulfillment['@ondc/org/category'];
+        const vehicle = fulfillment.vehicle;
+        const SELF_PICKUP = 'Self-Pickup'
+        const KERBSIDE = 'Kerbside'
+
+        if (type === SELF_PICKUP && category === KERBSIDE) {
+            if (!vehicle) {
+                cnfrmObj[`fulfillment${index}_vehicle`] =
+                    `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+            } else if (!vehicle.registration) {
+                cnfrmObj[`fulfillment${index}_vehicle_registration`] =
+                    `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+            }
+        } else if (vehicle) {
+            cnfrmObj[`fulfillment${index}_vehicle`] =
+                `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
+        }
+    });
+}
     try {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
       if (message.order.tags && isArray(message.order.tags)) {
@@ -318,6 +344,12 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
     }
+    
+    
+  
+
+
+
 
     try {
       logger.info(`Checking quote breakup prices for /${constants.CONFIRM}`)
