@@ -54,7 +54,7 @@ export default Object.freeze({
 
 export const ApiSequence = {
   SEARCH: 'search_full_catalog_refresh',
-  ON_SEARCH: 'on_search_full_catalog_refresh',
+  ON_SEARCH: 'on_search_full_catalog_refresh', 
   INC_SEARCH: 'search_inc_refresh',
   INC_ONSEARCH: 'on_search_inc_refresh',
   CATALOG_REJECTION: 'catalog_rejection',
