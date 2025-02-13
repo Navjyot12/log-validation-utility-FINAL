@@ -1,6 +1,5 @@
 import { Response, Request } from 'express'
 import _ from 'lodash'
-import axios from 'axios'
 import { validateActionSchema } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
 import { DOMAIN, IHttpResponse } from '../../shared/types'
@@ -9,85 +8,14 @@ import helper from './helper'
 
 import { verify, hash } from '../../shared/crypto'
 
-function isGitHubUrl(url: string): boolean {
-  try {
-    const parsedUrl = new URL(url)
-    return parsedUrl.hostname === 'github.com' || parsedUrl.hostname === 'raw.githubusercontent.com'
-  } catch (e) {
-    return false
-  }
-}
-
-// Helper function to convert GitHub URL to raw content URL
-function convertToRawUrl(githubUrl: string): string {
-  const parsedUrl = new URL(githubUrl)
-  if (parsedUrl.hostname === 'raw.githubusercontent.com') {
-    return githubUrl
-    
-  }
- 
-
-  const pathParts = parsedUrl.pathname.split('/')
-  if (pathParts[3] === 'blob' && pathParts.length >= 5) {
-    const user = pathParts[1]
-    const repo = pathParts[2]
-    const branch = pathParts[4]
-    const filePath = pathParts.slice(5).join('/')
-    return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${filePath}`
-  }
-
-  throw new Error('Invalid GitHub URL format')
-}
-
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      let { domain, version, payload, flow, bap_id, bpp_id } = req.body
+      const { domain, version, payload, flow, bap_id, bpp_id } = req.body
 
-      // Check if payload is a GitHub URL and fetch content
-      if (typeof payload === 'string' && isGitHubUrl(payload)) {
-        try {
-          const rawUrl = convertToRawUrl(payload)
-          const response = await axios.get(rawUrl)
-           
-
-          let fetchedData
-          if (typeof response.data === 'string') {
-            try {
-              fetchedData = JSON.parse(response.data)
-              
-            } catch (parseError) {
-              return res.status(400).json({
-                success: false,
-                response: { message: 'Fetched payload is not valid JSON' }
-              })
-            }
-          } else {
-            fetchedData = response.data
-            console.log("JATTT", JSON.stringify(fetchedData) )
-          }
-
-          payload = fetchedData
-        } catch (error: any) {
-          logger.error(error)
-          return res.status(400).json({
-            success: false,
-            response: { message: `Error fetching payload from GitHub: ${error.message}` }
-          })
-        }
-      }
-
-      // Validate payload is an object
-      if (typeof payload !== 'object' || payload === null) {
-        return res.status(400).json({
-          success: false,
-          response: { message: 'Payload must be a JSON object or a valid GitHub URL' }
-        })
-      }
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {
@@ -97,7 +25,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow.toString(),
+              flow,
               bap_id,
               bpp_id,
             )
@@ -130,10 +58,6 @@ const controller = {
           break
         case DOMAIN.RSF:
           {
-            if (version === "2.0.0") {
-              const { response, success, message } = await helper.validateRSF2(domain, payload, version, flow)
-              result = { response, success, message }
-            }
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
@@ -220,7 +144,6 @@ const controller = {
       const payload = req.body
       switch (core_version) {
         case '1.2.0':
-        case '1.2.5':
           error = validateActionSchema(payload, domain, action)
           break
         default:
@@ -231,6 +154,26 @@ const controller = {
 
       if (!_.isEmpty(error)) res.status(400).send({ success: false, error })
       else return res.status(200).send({ success: true, error })
+    } catch (error) {
+      logger.error(error)
+      return res.status(500).send({ success: false, error: error })
+    }
+  },
+  getValidationFormat: async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+      const upperDomain = req.params.dom
+      const { domain, version } = req.query
+      if (!domain || !version) return res.status(400).send({ success: false, error: 'domain, version are required' })
+
+      const domainEnum = helper.getEnumForDomain(upperDomain)
+
+      switch (domainEnum) {
+        case DOMAIN.FINANCE:
+          const format = helper.getFinanceValidationFormat(domain as string, version as string)
+          return res.status(200).send({ success: true, response: format })
+        default:
+          return res.status(400).send({ success: false, error: 'Domain not supported yet' })
+      }
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })

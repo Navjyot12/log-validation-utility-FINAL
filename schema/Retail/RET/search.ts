@@ -149,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full', 'bnp_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full'],
                   },
                   list: {
                     type: 'array',
