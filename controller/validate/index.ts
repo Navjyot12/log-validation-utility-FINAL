@@ -16,7 +16,6 @@ const controller = {
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {
@@ -59,10 +58,6 @@ const controller = {
           break
         case DOMAIN.RSF:
           {
-            if (version === "2.0.0") {
-              const { response, success, message } = await helper.validateRSF2(domain, payload, version, flow)
-              result = { response, success, message }
-            }
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
@@ -160,6 +155,26 @@ const controller = {
 
       if (!_.isEmpty(error)) res.status(400).send({ success: false, error })
       else return res.status(200).send({ success: true, error })
+    } catch (error) {
+      logger.error(error)
+      return res.status(500).send({ success: false, error: error })
+    }
+  },
+  getValidationFormat: async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+      const upperDomain = req.params.dom
+      const { domain, version } = req.query
+      if (!domain || !version) return res.status(400).send({ success: false, error: 'domain, version are required' })
+
+      const domainEnum = helper.getEnumForDomain(upperDomain)
+
+      switch (domainEnum) {
+        case DOMAIN.FINANCE:
+          const format = helper.getFinanceValidationFormat(domain as string, version as string)
+          return res.status(200).send({ success: true, response: format })
+        default:
+          return res.status(400).send({ success: false, error: 'Domain not supported yet' })
+      }
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })

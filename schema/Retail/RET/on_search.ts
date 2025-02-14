@@ -30,6 +30,7 @@ export const onSearchSchema = {
           type: 'string',
           enum: ['1.2.0', '1.2.5'],
           minLength: 1,
+         
         },
         bap_id: {
           type: 'string',
@@ -154,6 +155,7 @@ export const onSearchSchema = {
                                   code: {
                                     type: 'string',
                                     const: 'np_type',
+                                    
                                   },
                                   value: {
                                     type: 'string',
@@ -236,6 +238,7 @@ export const onSearchSchema = {
                   },
                   rating: {
                     type: ['number', 'null'],
+                    
                     minimum: 1,
                     maximum: 5,
                     default: null,
@@ -435,6 +438,7 @@ export const onSearchSchema = {
                         id: {
                           type: 'string',
                           pattern: '^[a-zA-Z0-9-]{1,12}$',
+                          
                         },
                         descriptor: {
                           type: 'object',
@@ -557,6 +561,7 @@ export const onSearchSchema = {
                         },
                         rating: {
                           type: ['number', 'null'],
+                          
                           minimum: 1,
                           maximum: 5,
                           default: null,

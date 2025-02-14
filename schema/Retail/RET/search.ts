@@ -24,6 +24,7 @@ export const searchSchema = {
           type: 'string',
           enum: ['1.2.0', '1.2.5'],
           minLength: 1,
+          
         },
         bap_id: {
           type: 'string',
@@ -166,6 +167,7 @@ export const searchSchema = {
                             'effective_date',
                             'static_terms_new',
                             'payload_type',
+                            'payload_type',
                             '000',
                             '001',
                             '002',
@@ -222,6 +224,55 @@ export const searchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
+                  {
+                    properties: {
+                      code: { const: 'bnp_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                              value: {
+                                type: "string",
+                                enum: ['yes', 'no']
+                              }
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  // Did changes for catalog_full
+                  {
+                    properties: {
+                      code: { const: 'catalog_full' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                const: "payload_type"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ['link', 'inline']
+                              }
+                            },
+                            required: ["code", "value"],
+                          }
+                        }
+                      }
+                    }
+                  },
                   {
                     properties: {
                       code: { const: 'bnp_features' },
@@ -356,6 +407,7 @@ export const searchSchema = {
                 type: 'object',
                 properties: {
                   code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc'] },
+                 
                 },
                 required: ['code', 'list'],
               },
