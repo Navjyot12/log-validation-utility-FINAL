@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -41,14 +41,9 @@ import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered
 import { checkOnStatusRTODelivered } from '../utils/Retail/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
-import checkRsfReceiverRecon from '../utils/RSF/RSF_v1/rsfReceiverRecon'
-import checkRsfOnReceiverRecon from '../utils/RSF/RSF_v1/rsfOnReciverRecon'
-import checkRsfSettle from '../utils/RSF/RSF_v2/settle'
-import checkRsfOnSettle from '../utils/RSF/RSF_v2/on_settle'
-import checkRsfReport from '../utils/RSF/RSF_v2/report'
-import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
-import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
-import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
+import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
+import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import { checkCatalogRejection } from '../utils/Retail/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -65,7 +60,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6']
+    const validFlows = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
     if (!retailDomains.includes(domain)) {
       return 'Domain should be one of the 1.2.0 retail domains'
     }
@@ -164,6 +159,23 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
 
+    const flowSevenSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.CATALOG_REJECTION,
+    ]
+
+    const flowEightSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    ]
+
+    const flowNineSequence = [
+      ApiSequence.INC_SEARCH,
+      ApiSequence.INC_ONSEARCH,
+      ApiSequence.CATALOG_REJECTION,
+    ]
+
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
@@ -184,6 +196,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     }
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       switch (apiSeq) {
+        case ApiSequence.CATALOG_REJECTION:
+          return checkCatalogRejection(data)
         case ApiSequence.SEARCH:
           return checkSearch(data, msgIdSet)
         case ApiSequence.ON_SEARCH:
@@ -284,6 +298,15 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW7:
+        logReport = processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW8:
+        logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW9:
+        logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {
@@ -410,7 +433,7 @@ export const IGMvalidateLogs = (data: any) => {
 
 export const RSFvalidateLogs = (data: any) => {
   let logReport: any = {}
-  
+
   try {
     dropDB()
   } catch (error) {
@@ -439,69 +462,6 @@ export const RSFvalidateLogs = (data: any) => {
     return error.message
   }
 }
-
-export const RSFvalidateLogsV2 = (data: any) => {
-  logger.info("Processing RSF v2.0.0 data:", data)
-  let logReport: any = {}
-  
-  try {
-    dropDB()
-  } catch (error) {
-    logger.error('Error while removing LMDB', error)
-  }
-
-  try {
-
-    if (data[RSF_v2_apiSequence.SETTLE]) {
-      const settle = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
-      if (!_.isEmpty(settle)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: settle }
-      }
-    }
-    
-    if (data[RSF_v2_apiSequence.ON_SETTLE]) {
-      const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
-      if (!_.isEmpty(on_settle)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
-      }
-    }
-
-    if (data[RSF_v2_apiSequence.REPORT]) {
-      const report = checkRsfReport(data[RSF_v2_apiSequence.REPORT])
-      if (!_.isEmpty(report)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.REPORT]: report }
-      }
-    }
-
-    if (data[RSF_v2_apiSequence.ON_REPORT]) {
-      const on_report = checkRsfOnReport(data[RSF_v2_apiSequence.ON_REPORT])
-      if (!_.isEmpty(on_report)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.ON_REPORT]: on_report }
-      }
-    }
-
-    if (data[RSF_v2_apiSequence.RECON]) {
-      const recon = checkRsfRecon(data[RSF_v2_apiSequence.RECON])
-      if (!_.isEmpty(recon)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.RECON]: recon }
-      }
-    }
-
-    if (data[RSF_v2_apiSequence.ON_RECON]) {
-      const on_recon = checkRsfOnRecon(data[RSF_v2_apiSequence.ON_RECON])
-      if (!_.isEmpty(on_recon)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.ON_RECON]: on_recon }
-      }
-    }
-
-    logger.info('RSF v2.0.0 Report Generated Successfully')
-    return logReport
-  } catch (error: any) {
-    logger.error(error.message)
-    return error.message
-  }
-}
-
 
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}

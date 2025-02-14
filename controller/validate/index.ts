@@ -45,38 +45,36 @@ const controller = {
       let { domain, version, payload, flow, bap_id, bpp_id } = req.body
 
       // Check if payload is a GitHub URL and fetch content
-      if (typeof payload === 'object') {
-        try {
-          const search_full_catalog_refresh = payload.search_full_catalog_refresh
-        if(!isGitHubUrl(search_full_catalog_refresh))
-          return
-          const rawUrl = convertToRawUrl(search_full_catalog_refresh)
-          const response = await axios.get(rawUrl)
-           
+      if (typeof payload === 'object' && payload.search_full_catalog_refresh) {
+        const search_full_catalog_refresh = payload.search_full_catalog_refresh
+        if (isGitHubUrl(search_full_catalog_refresh)) {
+          try {
+            const rawUrl = convertToRawUrl(search_full_catalog_refresh)
+            const response = await axios.get(rawUrl)
 
-          let fetchedData
-          if (typeof response.data === 'string') {
-            try {
-              fetchedData = JSON.parse(response.data)
-              
-            } catch (parseError) {
-              return res.status(400).json({
-                success: false,
-                response: { message: 'Fetched payload is not valid JSON' }
-              })
+            let fetchedData
+            if (typeof response.data === 'string') {
+              try {
+                fetchedData = JSON.parse(response.data)
+              } catch (parseError) {
+                return res.status(400).json({
+                  success: false,
+                  response: { message: 'Fetched payload is not valid JSON' }
+                })
+              }
+            } else {
+              fetchedData = response.data
             }
-          } else {
-            fetchedData = response.data
-            // console.log("JATTT", JSON.stringify(fetchedData) )
-          }
 
-          payload.search_full_catalog_refresh = fetchedData
-        } catch (error: any) {
-          logger.error(error)
-          return res.status(400).json({
-            success: false,
-            response: { message: `Error fetching payload from GitHub: ${error.message}` }
-          })
+            // Replace the GitHub URL with the fetched data
+            payload.search_full_catalog_refresh = fetchedData
+          } catch (error: any) {
+            logger.error(error)
+            return res.status(400).json({
+              success: false,
+              response: { message: `Error fetching payload from GitHub: ${error.message}` }
+            })
+          }
         }
       }
 
@@ -87,6 +85,7 @@ const controller = {
           response: { message: 'Payload must be a JSON object or a valid GitHub URL' }
         })
       }
+
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
@@ -106,7 +105,6 @@ const controller = {
             )
             result = { response, success, message }
           }
-
           break
         case DOMAIN.LOGISTICS:
           // to-do
@@ -117,26 +115,24 @@ const controller = {
             const { response, success, message } = await helper.validateFinance(domain, payload, version, flow)
             result = { response, success, message }
           }
-
           break
         case DOMAIN.MOBILITY:
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
           }
-
           break
         case DOMAIN.IGM:
-          // eslint-disable-next-line no-case-declarations
-          const { response, success, message } = await helper.validateIGM(payload, version)
-          result = { response, success, message }
+          {
+            const { response, success, message } = await helper.validateIGM(payload, version)
+            result = { response, success, message }
+          }
           break
         case DOMAIN.RSF:
           {
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
-
           break
         default:
           throw new Error('Internal server error')
