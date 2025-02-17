@@ -33,7 +33,7 @@ function convertToRawUrl(githubUrl: string): string {
     const repo = pathParts[2]
     const branch = pathParts[4]
     const filePath = pathParts.slice(5).join('/')
-    return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${filePath}+search`
+    return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${filePath}`
   }
 
   throw new Error('Invalid GitHub URL format')
