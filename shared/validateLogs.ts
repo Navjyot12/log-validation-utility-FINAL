@@ -174,6 +174,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const flowEightSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
+      ApiSequence.CATALOG_REJECTION
     ]
     const flowNineSequence = [
       ApiSequence.INC_SEARCH,
